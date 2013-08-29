@@ -1,0 +1,28 @@
+[
+  {
+    "domain_content": true, 
+    "domain_data": true, 
+    "domain_software": true, 
+    "family": "", 
+    "id": "cc-zero", 
+    "is_okd_compliant": true, 
+    "is_osi_compliant": false, 
+    "maintainer": "", 
+    "status": "active", 
+    "title": "Creative Commons CCZero", 
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.it"
+  }, 
+  {
+    "domain_content": true, 
+    "domain_data": false, 
+    "domain_software": false, 
+    "family": "", 
+    "id": "cc-by", 
+    "is_okd_compliant": true, 
+    "is_osi_compliant": false, 
+    "maintainer": "", 
+    "status": "active", 
+    "title": "Creative Commons Attribution", 
+    "url": "http://creativecommons.org/licenses/by/2.5/it/"
+  }
+]
