@@ -1,3 +1,6 @@
 [submodule "sources/ckan"]
 	path = sources/ckan
 	url = https://github.com/opendatatrentino/ckan
+[submodule "sources/ckanext-datitrentinoit"]
+	path = sources/ckanext-datitrentinoit
+	url = https://github.com/opendatatrentino/ckanext-datitrentinoit.git
