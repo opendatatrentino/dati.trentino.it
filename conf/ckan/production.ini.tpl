@@ -14,7 +14,7 @@
 [DEFAULT]
 
 ## WARNING: This must be set to ``false`` in production
-debug = true
+debug = false
 
 [server:main]
 use = egg:Paste#http
@@ -68,7 +68,7 @@ ckan.auth.create_user_via_api = false
 
 ## Search Settings
 ckan.site_id = default
-solr_url = http://ckan-db.local:8983/solr/ckan_datitrentino_20
+solr_url = http://ckan-db.local:8983/solr/ckan_20
 #ckan.simple_search = 1
 
 
@@ -78,12 +78,12 @@ solr_url = http://ckan-db.local:8983/solr/ckan_datitrentino_20
 ##       Add ``pdf_preview`` to enable the resource preview for PDFs
 ##		Add ``resource_proxy`` to enable resorce proxying and get around the
 ##		same origin policy
-ckan.plugins = stats text_preview recline_preview datitrentinoit
+ckan.plugins = stats text_preview recline_preview datitrentinoit datitrentinoit_form
 
 
 ## Front-End Settings
 ckan.site_title = Dati Trentino
-ckan.site_description = Dati Aperti del Trentino
+ckan.site_description = **Dati Aperti del Trentino**. Tutti i dati che cercavi della Provincia Autonoma di Trento.
 ckan.favicon = /images/icons/icon.png
 ckan.site_logo = /base/images/ckan-logo.png
 ckan.gravatar_default = identicon
@@ -101,7 +101,7 @@ ckan.preview.loadable = html htm rdf+xml owl+xml xml n3 n-triples turtle plain a
 
 ## Internationalisation Settings
 ckan.locale_default = it
-ckan.locale_order = it en pt_BR ja cs_CZ ca es fr el sv sr sr@latin no sk fi ru de pl nl bg ko_KR hu sa sl lv
+ckan.locale_order = en pt_BR ja it cs_CZ ca es fr el sv sr sr@latin no sk fi ru de pl nl bg ko_KR hu sa sl lv
 ckan.locales_offered =
 ckan.locales_filtered_out =
 
@@ -118,16 +118,7 @@ ckan.feeds.author_link =
 #ofs.impl = pairtree
 #ofs.storage_dir = /var/lib/ckan/default
 
-# Google cloud storage:
-#ofs.impl = google
-#ofs.gs_access_key_id =
-#ofs.gs_secret_access_key =
-
-# S3 cloud storage:
-#ofs.impl = s3
-#ofs.aws_access_key_id = ....
-#ofs.aws_secret_access_key = ....
-
+# Local file storage:
 ofs.impl = pairtree
 ofs.storage_dir = /path/to/data
 
