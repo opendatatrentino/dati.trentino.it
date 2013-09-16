@@ -1,3 +1,4 @@
 *.ini
 !*.example.ini
 !*.tpl
+!who.ini
