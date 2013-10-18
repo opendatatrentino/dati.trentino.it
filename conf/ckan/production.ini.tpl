@@ -16,46 +16,54 @@
 ## WARNING: This must be set to ``false`` in production
 debug = false
 
+
 [server:main]
 use = egg:Paste#http
 host = 0.0.0.0
 port = 5000
 
+
 [app:main]
+
+## Base config for pylons
+##------------------------------------------------------------
 use = egg:ckan
 full_stack = true
 cache_dir = /tmp/%(ckan.site_id)s/
+
+
+## Beaker configuration (session cookies)
+##------------------------------------------------------------
 beaker.session.key = ckan
-
-
-## This is the secret token that the beaker library uses to hash the cookie sent
-## to the client. `paster make-config` generates a unique value for this each
-## time it generates a config file.
 beaker.session.secret = Base64EncodedStringHere=
 
 
-## `paster make-config` generates a unique value for this each time it generates
-## a config file.
+## Instance UUID
+##------------------------------------------------------------
 app_instance_uuid = {00000000-0000-0000-0000-000000000000}
 
 
 ## repoze.who configuration
+##------------------------------------------------------------
 who.config_file = %(here)s/who.ini
 who.log_level = warning
 who.log_file = %(cache_dir)s/who_log.ini
 
 
 ## Database Settings
+##------------------------------------------------------------
 sqlalchemy.url = postgresql://ckan:password@127.0.0.1/ckan_default
 # ckan.datastore.write_url = postgresql://ckan:password@127.0.0.1/ckan_datastore
 # ckan.datastore.read_url = postgresql://ckan_ro:password@127.0.0.1/ckan_datastore
 
 
 ## Site Settings
+##------------------------------------------------------------
 ckan.site_url =
 
 
 ## Authorization Settings
+##------------------------------------------------------------
 ckan.auth.anon_create_dataset = false
 ckan.auth.create_unowned_dataset = true
 ckan.auth.create_dataset_if_not_in_organization = true
@@ -67,12 +75,14 @@ ckan.auth.create_user_via_api = false
 
 
 ## Search Settings
+##------------------------------------------------------------
 ckan.site_id = default
 solr_url = http://ckan-db.local:8983/solr/ckan_20
 #ckan.simple_search = 1
 
 
 ## Plugins Settings
+##------------------------------------------------------------
 
 ## Note: Add ``datastore`` to enable the CKAN DataStore
 ##       Add ``pdf_preview`` to enable the resource preview for PDFs
@@ -82,6 +92,7 @@ ckan.plugins = stats text_preview recline_preview datitrentinoit datitrentinoit_
 
 
 ## Front-End Settings
+##------------------------------------------------------------
 ckan.site_title = Dati Trentino
 ckan.site_description = **Dati Aperti del Trentino**. Tutti i dati che cercavi della Provincia Autonoma di Trento.
 ckan.favicon = /images/icons/icon.png
@@ -100,13 +111,15 @@ ckan.preview.loadable = html htm rdf+xml owl+xml xml n3 n-triples turtle plain a
 
 
 ## Internationalisation Settings
+##------------------------------------------------------------
 ckan.locale_default = it
-ckan.locale_order = en pt_BR ja it cs_CZ ca es fr el sv sr sr@latin no sk fi ru de pl nl bg ko_KR hu sa sl lv
+ckan.locale_order = it en de pt_BR ja cs_CZ ca es fr el sv sr sr@latin no sk fi ru pl nl bg ko_KR hu sa sl lv
 ckan.locales_offered =
 ckan.locales_filtered_out =
 
 
 ## Feeds Settings
+##------------------------------------------------------------
 ckan.feeds.authority_name =
 ckan.feeds.date =
 ckan.feeds.author_name =
@@ -114,16 +127,13 @@ ckan.feeds.author_link =
 
 
 ## Storage Settings
-# Local file storage:
-#ofs.impl = pairtree
-#ofs.storage_dir = /var/lib/ckan/default
-
-# Local file storage:
+##------------------------------------------------------------
 ofs.impl = pairtree
 ofs.storage_dir = /path/to/data
 
 
 ## Activity Streams Settings
+##------------------------------------------------------------
 # ckan.activity_streams_enabled = true
 # ckan.activity_list_limit = 31
 # ckan.activity_streams_email_notifications = true
@@ -131,6 +141,7 @@ ofs.storage_dir = /path/to/data
 
 
 ## Email settings
+##------------------------------------------------------------
 email_to = you@yourdomain.com
 error_email_from = paste@localhost
 smtp.server = localhost
@@ -141,6 +152,8 @@ smtp.starttls = False
 
 
 ## Logging configuration
+##------------------------------------------------------------
+
 [loggers]
 keys = root, ckan, ckanext
 
