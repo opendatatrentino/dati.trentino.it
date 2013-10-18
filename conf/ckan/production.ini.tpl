@@ -151,6 +151,16 @@ smtp.starttls = False
 # smtp.mail_from =
 
 
+## Harvester settings
+##------------------------------------------------------------
+ckan.harvest.mq.type = ampq
+ckan.harvest.mq.hostname = localhost
+ckan.harvest.mq.port = 5672
+ckan.harvest.mq.user_id = guest
+ckan.harvest.mq.password = guest
+ckan.harvest.mq.virtual_host = /
+
+
 ## Logging configuration
 ##------------------------------------------------------------
 
