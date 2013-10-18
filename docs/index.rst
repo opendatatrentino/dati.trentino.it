@@ -3,13 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to dati.trentino.it's documentation!
-============================================
+dati.trentino.it
+================
+
+Documentation on the structure of dati.trentino.it (with ckan 2.2),
+installation and maintanance instructions, etc.
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
+
+   dti18/index
+   dti2x/index
 
 
 
