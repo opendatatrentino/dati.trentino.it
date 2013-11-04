@@ -24,5 +24,18 @@
     "status": "active", 
     "title": "Creative Commons Attribution", 
     "url": "http://creativecommons.org/licenses/by/2.5/it/"
+  },
+  {
+    "domain_content": false,
+    "domain_data": true,
+    "domain_software": false,
+    "family": "",
+    "id": "odc-odbl",
+    "is_okd_compliant": true,
+    "is_osi_compliant": false,
+    "maintainer": "",
+    "status": "active",
+    "title": "Open Data Commons Open Database License (ODbL)",
+    "url": "http://www.opendefinition.org/licenses/odc-odbl"
   }
 ]
