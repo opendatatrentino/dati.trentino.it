@@ -94,7 +94,7 @@ ckan.plugins = stats text_preview recline_preview datitrentinoit datitrentinoit_
 ## Front-End Settings
 ##------------------------------------------------------------
 ckan.site_title = Dati Trentino
-ckan.site_description = **Dati Aperti del Trentino**. Tutti i dati che cercavi della Provincia Autonoma di Trento.
+ckan.site_description = **Dati Aperti del Trentino**. Tutti i dati che cercavi del Sistema Trentino.
 ckan.favicon = /images/icons/icon.png
 ckan.site_logo = /base/images/ckan-logo.png
 ckan.gravatar_default = identicon
