@@ -35,43 +35,63 @@ We can also:
 
 from __future__ import print_function
 
+from ConfigParser import RawConfigParser
+import datetime
 import os
 import re
+import sys
+import urlparse
 import uuid
-import datetime
 
 import psycopg2
 import psycopg2.extras
 
 
-## todo: put this in a configuration file
-connection = psycopg2.connect(
-    host='ckan-db.local',
-    port=5432,
-    user='ckan',
-    password='pass',
-    database='ckan_datitrentino_20',
-)
-
-
 SIMULATION_MODE = False
 
 
-def get_cursor():
-    """Return a psycopg DictCursor"""
-    return connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+class DbMigrationApp(object):
+    def __init__(self, conf_file_name):
+        self.conf_file_name = conf_file_name
+        self.connection = self.get_postgres_connection()
+
+    def get_postgres_conf(self):
+        ## Read ``[app:main]sqlalchemy.url``
+        cfp = RawConfigParser()
+        cfp.read(self.conf_file_name)
+        sqlalchemy_url = cfp.get('app:main', 'sqlalchemy.url')
+        u = urlparse.urlparse(sqlalchemy_url)
+        assert u.scheme == 'postgresql'
+        return {
+            'host': u.hostname,
+            'port': u.port or 5432,
+            'user': u.username,
+            'password': u.password,
+            'database': filter(None, u.path.split('/'))[0],
+        }
+
+    def get_postgres_connection(self):
+        return psycopg2.connect(**self.get_postgres_conf())
+
+    def get_cursor(self):
+        """Return a psycopg DictCursor"""
+        return self.connection.cursor(
+            cursor_factory=psycopg2.extras.DictCursor)
+
+    def cursor_context(self):
+        return CursorContext(self.get_cursor())
 
 
 class CursorContext(object):
-    def __init__(self):
-        self.cursor = get_cursor()
+    def __init__(self, cursor):
+        self.cursor = cursor
 
     def __enter__(self):
         self.cursor.execute("BEGIN")
         return self.cursor
 
     def __exit__(self, *a):
-        ## todo: rollback if an exception occurred!
+        ## todo: rollback if an exception occurred too!
         if SIMULATION_MODE:
             self.cursor.execute("ROLLBACK")
         else:
@@ -93,6 +113,15 @@ def gen_insert_query(table, obj):
     return query
 
 
+if len(sys.argv) >= 2:
+    cfg_file_name = sys.argv[1]
+else:
+    cfg_file_name = os.path.join(os.environ['VIRTUAL_ENV'],
+                                 'etc', 'ckan', 'production.ini')
+
+db = DbMigrationApp(cfg_file_name)
+
+
 ##-----------------------------------------------------------------------------
 ## Create a revision for all the changes we are going to make
 
@@ -100,46 +129,64 @@ MIGRATION_REVISION_UUID = str(uuid.uuid4())
 MIGRATION_DATE = datetime.datetime.now()
 
 print("Creating a revision for all the new objects")
-print("    *** Revision id: {0}".format(MIGRATION_REVISION_UUID))
-with CursorContext() as cur:
+print("    Revision id: {0}".format(MIGRATION_REVISION_UUID))
+with db.cursor_context() as cur:
     data = {
         'id': MIGRATION_REVISION_UUID,
         'timestamp': MIGRATION_DATE,
-        'author': '**script**',
+        'author': '**migration-script**',
         'message': 'Custom data migration, from 1.8-dti to 2.x',
         'state': 'active',
     }
     query = gen_insert_query('revision', data)
-    cur.execute(query, data);
+    cur.execute(query, data)
 
 
 ##-----------------------------------------------------------------------------
 ## Fix the existing groups
 ## - They're all organizations -> change their type
 ## - We need to make sure they're linked correctly with datasets
+##   - We need to update the "owner_org" field in the datasets
 
-print("Converting original groups -> organizations")
-with CursorContext() as cur:
+# Probably the best way is to:
+#  - export organizations
+#  - export membershipts
+#  - apply changes on datasets one-by-one
+
+print("Marking old groups as organizations")
+with db.cursor_context() as cur:
     cur.execute("""
     UPDATE "group" SET
         "is_organization" = TRUE,
         "type" = 'organization';
     """)
+    print("    " + cur.statusmessage)
     cur.execute("""
     UPDATE "group_revision" SET
         "is_organization" = TRUE,
         "type" = 'organization';
     """)
+    print("    " + cur.statusmessage)
+
+print("Fixing relationships (add capacity='organization')")
+with db.cursor_context() as cur:
     cur.execute("""
     UPDATE member SET capacity='organization'
     WHERE table_name='package' AND group_id IN (
         SELECT id FROM "group" WHERE is_organization=TRUE
     );
+    """)
+    print("    " + cur.statusmessage)
+    cur.execute("""
     UPDATE member_revision SET capacity='organization'
     WHERE table_name='package' AND group_id IN (
         SELECT id FROM "group_revision" WHERE is_organization=TRUE
     );
     """)
+    print("    " + cur.statusmessage)
+
+print("Updating owner organization for packages")
+with db.cursor_context() as cur:
     cur.execute("""
     UPDATE "package" AS p SET owner_org=(
         SELECT group_id FROM "member"
@@ -148,6 +195,9 @@ with CursorContext() as cur:
               AND state='active'
               LIMIT 1
     );
+    """)
+    print("    " + cur.statusmessage)
+    cur.execute("""
     UPDATE "package_revision" AS p SET owner_org=(
         SELECT group_id FROM "member_revision"
         WHERE table_name='package'
@@ -156,23 +206,25 @@ with CursorContext() as cur:
               LIMIT 1
     );
     """)
+    print("    " + cur.statusmessage)
 
+print("Collecting organization names")
 org_names = set()
-with CursorContext() as cur:
+with db.cursor_context() as cur:
     cur.execute("""
     SELECT name FROM "group"
     WHERE is_organization = TRUE;
     """)
     for row in cur.fetchall():
         org_names.add(row['name'])
-
+print("    Found {0} organizations".format(len(org_names)))
 
 
 ##-----------------------------------------------------------------------------
 ## Extract all the tags from the "category_vocab" vocabulary
 
 print("Converting category tags -> groups")
-with CursorContext() as cur:
+with db.cursor_context() as cur:
     cur.execute("""
     SELECT * FROM tag
     WHERE vocabulary_id = (
@@ -180,6 +232,8 @@ with CursorContext() as cur:
         WHERE name='category_vocab'
     );
     """)
+    print("    " + cur.statusmessage)
+
     for tag in cur.fetchall():
         print("Processing tag: {0}".format(tag['name']))
 
@@ -216,7 +270,7 @@ with CursorContext() as cur:
         })
 
         ## Create "group" and "group_revision"
-        with CursorContext() as cur3:
+        with db.cursor_context() as cur3:
             query = gen_insert_query('group', group_data)
             cur3.execute(query, group_data)
             query = gen_insert_query('group_revision',
@@ -224,7 +278,7 @@ with CursorContext() as cur:
             cur3.execute(query, group_revision_data)
 
         ## Find dataset relations
-        with CursorContext() as cur2:
+        with db.cursor_context() as cur2:
             cur2.execute(
                 """
                 SELECT * FROM package_tag WHERE tag_id = %(tag_id)s
@@ -235,7 +289,7 @@ with CursorContext() as cur:
                       "".format(tag_package_rel['package_id']))
 
                 ## Create "membership" record
-                with CursorContext() as cur3:
+                with db.cursor_context() as cur3:
                     data = {
                         'id': str(uuid.uuid4()),
                         'table_name': 'package',
@@ -258,3 +312,11 @@ with CursorContext() as cur:
                     cur3.execute(query, data)
                     query = gen_insert_query('member_revision', rev_data)
                     cur3.execute(query, rev_data)
+
+with db.cursor_context() as cur:
+    cur.execute("""
+    TRUNCATE TABLE kombu_message CASCADE;
+    TRUNCATE TABLE kombu_queue CASCADE;
+    TRUNCATE TABLE task_status CASCADE;
+    DELETE FROM related WHERE title='Visualizzatore JSON'
+    """)
