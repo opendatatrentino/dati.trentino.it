@@ -16,10 +16,10 @@ cd "$( dirname "$BASH_SOURCE" )"
 
 ## Install ckan + plugins + dependencies, only reading from
 ## the local packages archive.
-pip install \
-    --find-links ./dependencies/ --no-index \
-    ./sources/ckan -r ./sources/ckan/requirements.txt \
-    ./sources/ckanext-datitrentinoit
+pip install --find-links ./dependencies/ --no-index
+
+cd ./sources/ckan && { { python setup.py install; }; cd -; }
+cd ./sources/ckanext-datitrentinoit && { { python setup.py install; }; cd -; }
 
 
 ## Create configuration files in the virtualenv
