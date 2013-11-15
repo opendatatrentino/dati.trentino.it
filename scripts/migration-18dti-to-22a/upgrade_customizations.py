@@ -313,10 +313,22 @@ with db.cursor_context() as cur:
                     query = gen_insert_query('member_revision', rev_data)
                     cur3.execute(query, rev_data)
 
+
+##-----------------------------------------------------------------------------
+## Truncate some garbage tables
+
+garbage_tables = ('kombu_message', 'kombu_queue', 'task_status',
+                  'celery_taskmeta', 'celery_tasksetmeta')
+
+for table in garbage_tables:
+    print("Truncating table: {0}".format(table))
+    with db.cursor_context() as cur:
+        cur.execute('TRUNCATE TABLE "{0}" CASCADE;'.format(table))
+
+
+##-----------------------------------------------------------------------------
+## Custom actions
+
+print("Deleting application 'Visualizzatore JSON'")
 with db.cursor_context() as cur:
-    cur.execute("""
-    TRUNCATE TABLE kombu_message CASCADE;
-    TRUNCATE TABLE kombu_queue CASCADE;
-    TRUNCATE TABLE task_status CASCADE;
-    DELETE FROM related WHERE title='Visualizzatore JSON'
-    """)
+    cur.execute("DELETE FROM related WHERE title='Visualizzatore JSON'")
