@@ -153,12 +153,17 @@ smtp.starttls = False
 
 ## Harvester settings
 ##------------------------------------------------------------
-ckan.harvest.mq.type = ampq
-ckan.harvest.mq.hostname = localhost
-ckan.harvest.mq.port = 5672
-ckan.harvest.mq.user_id = guest
-ckan.harvest.mq.password = guest
-ckan.harvest.mq.virtual_host = /
+# ckan.harvest.mq.type = ampq
+# ckan.harvest.mq.hostname = localhost
+# ckan.harvest.mq.port = 5672
+# ckan.harvest.mq.user_id = guest
+# ckan.harvest.mq.password = guest
+# ckan.harvest.mq.virtual_host = /
+
+
+## Path to translations directory
+##------------------------------------------------------------
+# ckan.i18n_directory = /path/to/translations/
 
 
 ## Logging configuration
