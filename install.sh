@@ -16,7 +16,7 @@ cd "$( dirname "$BASH_SOURCE" )"
 
 ## Install ckan + plugins + dependencies, only reading from
 ## the local packages archive.
-pip install --find-links ./dependencies/ --no-index
+pip install --find-links ./dependencies/ --no-index -r sources/ckan/requirements.txt
 
 cd ./sources/ckan && { { python setup.py install; }; cd -; }
 cd ./sources/ckanext-datitrentinoit && { { python setup.py install; }; cd -; }
