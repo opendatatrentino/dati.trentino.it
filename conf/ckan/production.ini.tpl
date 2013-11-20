@@ -106,7 +106,6 @@ ckan.preview.loadable = html htm rdf+xml owl+xml xml n3 n-triples turtle plain a
 # package_new_return_url = http://another.frontend/dataset/<NAME>
 # ckan.recaptcha.publickey =
 # ckan.recaptcha.privatekey =
-# licenses_group_url = http://licenses.opendefinition.org/licenses/groups/ckan.json
 # ckan.template_footer_end =
 
 
@@ -164,6 +163,12 @@ smtp.starttls = False
 ## Path to translations directory
 ##------------------------------------------------------------
 # ckan.i18n_directory = /path/to/translations/
+
+
+## Licenses file
+##------------------------------------------------------------
+# licenses_group_url = http://licenses.opendefinition.org/licenses/groups/ckan.json
+# licenses_group_url = file:///path/to/my/local/json-list-of-licenses.json
 
 
 ## Logging configuration
