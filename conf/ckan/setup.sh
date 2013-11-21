@@ -27,6 +27,7 @@ fi
 
 cp production.ini.tpl "$CONFDIR"/.production.ini.tpl
 cp who.ini "$CONFDIR"/who.ini
+cp licenses.json "$CONFDIR"/licenses.json
 
 cat > "$CONFDIR"/compile.sh <<EOF_OF_SCRIPT
 #!/bin/bash
