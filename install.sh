@@ -28,4 +28,6 @@ cd ./sources/ckan && { { python setup.py install; }; cd -; }
 cd ./sources/ckanext-datitrentinoit && { { python setup.py install; }; cd -; }
 
 ## Create configuration files in the virtualenv
-./conf/ckan/setup.sh
+if [ ! -e "$VIRTUAL_ENV"/.no-auto-conf ]; then
+    ./conf/ckan/setup.sh
+fi
