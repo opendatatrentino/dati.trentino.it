@@ -150,6 +150,14 @@ smtp.starttls = False
 # smtp.mail_from =
 
 
+## Authorization settings
+##------------------------------------------------------------
+ckan.auth.user_create_groups = False
+ckan.auth.user_create_organizations = False
+ckan.auth.user_delete_groups = False
+ckan.auth.user_delete_organizations = False
+
+
 ## Harvester settings
 ##------------------------------------------------------------
 # ckan.harvest.mq.type = ampq
