@@ -67,11 +67,11 @@ ckan.site_url =
 ckan.auth.anon_create_dataset = false
 ckan.auth.create_unowned_dataset = true
 ckan.auth.create_dataset_if_not_in_organization = true
-ckan.auth.user_create_groups = true
-ckan.auth.user_create_organizations = true
-ckan.auth.user_delete_groups = true
-ckan.auth.user_delete_organizations = true
 ckan.auth.create_user_via_api = false
+ckan.auth.user_create_groups = False
+ckan.auth.user_create_organizations = False
+ckan.auth.user_delete_groups = False
+ckan.auth.user_delete_organizations = False
 
 
 ## Search Settings
@@ -148,14 +148,6 @@ smtp.starttls = False
 # smtp.user = your_username@gmail.com
 # smtp.password = your_password
 # smtp.mail_from =
-
-
-## Authorization settings
-##------------------------------------------------------------
-ckan.auth.user_create_groups = False
-ckan.auth.user_create_organizations = False
-ckan.auth.user_delete_groups = False
-ckan.auth.user_delete_organizations = False
 
 
 ## Harvester settings
