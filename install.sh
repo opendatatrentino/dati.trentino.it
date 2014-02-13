@@ -13,6 +13,9 @@ fi
 
 cd "$( dirname "$BASH_SOURCE" )"
 
+## Fail fast, otherwise errors might get hidden..
+set -e
+
 PIP_LOCAL="pip install --find-links file://${PWD}/dependencies/ --no-index"
 
 
