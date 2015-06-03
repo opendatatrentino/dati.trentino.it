@@ -20,8 +20,8 @@ import psycopg2.extras
 connection = psycopg2.connect(
     host='ckan-db.local',
     port=5432,
-    user='ckan',
-    password='pass',
+    user='',
+    password='',
     database='ckan_datitrentino_20',
 )
 
